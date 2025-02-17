@@ -7,7 +7,7 @@ from pathlib import Path
 from datetime import datetime
 
 class SequenceDataset(Dataset):
-    def __init__(self, train_path, seq_length=5):
+    def __init__(self, train_path, seq_length=40):
         self.inputs, self.targets = torch.load(train_path)
         self.seq_length = seq_length
         
@@ -81,6 +81,8 @@ def train_model(num_hid, optimizer_type, learning_rate, epochs, data_dir):
         total_loss = 0
         
         for batch_idx, (inputs, targets) in enumerate(train_loader):
+            print(f'debug print, bat_idx: {batch_idx}, {inputs.shape}, {targets.shape}')
+
             inputs = inputs.to(device).float()
             targets = targets.to(device).float()
             

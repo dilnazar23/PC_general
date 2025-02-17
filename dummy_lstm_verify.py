@@ -8,7 +8,7 @@ class SimpleLSTM(nn.Module):
         super(SimpleLSTM, self).__init__()
         self.hidden_size = hidden_size
         self.lstm = nn.LSTM(input_size=input_size, hidden_size=hidden_size)  # Removed batch_size
-        self.linear = nn.Linear(hidden_size, 1)  # Output a single value
+        self.linear = nn.Linear(hidden_size, 2)  # Output a single value
         
     def forward(self, x):
         lstm_out, _ = self.lstm(x)

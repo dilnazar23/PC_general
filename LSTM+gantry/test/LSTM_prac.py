@@ -4,10 +4,11 @@ from torch.utils.data import Dataset, DataLoader
 from torch.utils.tensorboard import SummaryWriter
 import argparse
 from pathlib import Path
+from datetime import datetime
 
 class SequenceDataset(Dataset):
-    def __init__(self, train_path, seq_length=40):
-        self.inputs,self.targets = torch.load(train_path)
+    def __init__(self, train_path, seq_length=5):
+        self.inputs, self.targets = torch.load(train_path)
         self.seq_length = seq_length
         
     def __len__(self):
@@ -53,20 +54,14 @@ def train_model(num_hid, optimizer_type, learning_rate, epochs, data_dir):
     
     # Data loading
     data_dir = Path(data_dir)
-    train_dataset = SequenceDataset(
-        data_dir / "train_input.pt",
-        data_dir / "train_output.pt"
-    )
-    val_dataset = SequenceDataset(
-        data_dir / "val_input.pt",
-        data_dir / "val_output.pt"
-    )
+    train_dataset = SequenceDataset(data_dir / "sim_train_set.pt")
+    # val_dataset = SequenceDataset(data_dir / "sim_val_set.pt")
     
-    train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
-    val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
+    train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
+    # val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
     
     # Model initialization
-    model = LSTMModel(num_features=4, hidden_size=num_hid).to(device)
+    model = LSTMModel(num_features=32, hidden_size=num_hid).to(device)
     
     # Loss and optimizer
     criterion = nn.MSELoss()
@@ -104,14 +99,14 @@ def train_model(num_hid, optimizer_type, learning_rate, epochs, data_dir):
         avg_train_loss = total_loss / len(train_loader)
         
         # Validation every 100 epochs
-        if (epoch + 1) % 100 == 0:
+        if (epoch + 1) % 10 == 0:
         #     val_loss = validate_model(model, val_loader, criterion, device)
-        #     print(f'Epoch [{epoch+1}/{epochs}], '
-        #           f'Training Loss: {avg_train_loss:.4f}, '
+            print(f'Epoch [{epoch+1}/{epochs}]',
+                  f'Training Loss: {avg_train_loss:.4f}')
         #           f'Validation Loss: {val_loss:.4f}')
             
-            # Log to TensorBoard
-            writer.add_scalar('Training Loss', avg_train_loss, epoch)
+        # Log to TensorBoard
+        writer.add_scalar('Training Loss', avg_train_loss, epoch)
             # writer.add_scalar('Validation Loss', val_loss, epoch)
     
     # Save the model

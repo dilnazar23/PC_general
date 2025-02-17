@@ -15,7 +15,7 @@ class TrainingLogger:
             os.makedirs(log_dir)
             
         # Create unique filename with timestamp
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        timestamp = datetime.now().strftime('%m%d_%H%M')
         self.log_file = os.path.join(log_dir, f'training_log_{timestamp}.csv')
         
         # Initialize the CSV file with headers and hyperparameters
@@ -105,3 +105,31 @@ for epoch in range(num_epochs):
     # Log progress
     logger.log_progress(epoch, train_loss, val_loss)
 """
+def export_model(model, device='cuda', save_path="layout1_model", input_shape=(1,32)):
+    # Save PyTorch model
+    torch.save({
+        'model_state_dict': model.state_dict(),
+        'model_architecture': model.__class__.__name__
+    }, f"{save_path}.pth")
+    
+    # Prepare model for ONNX export
+    model.eval()    
+    # Create dummy input tensor
+    dummy_input = torch.randn(input_shape, device=device)
+    
+    # Export to ONNX
+    torch.onnx.export(
+        model,
+        dummy_input,
+        f"{save_path}.onnx",
+        export_params=True,
+        opset_version=11,
+        do_constant_folding=True,
+        input_names=['input'],
+        output_names=['output'],
+        dynamic_axes={
+            'input': {0: 'batch_size'},
+            'output': {0: 'batch_size'}
+        }
+    )
+    print(f"Model saved as {save_path}.pth and {save_path}.onnx")

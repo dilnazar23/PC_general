@@ -27,7 +27,7 @@ class LSTMModel(nn.Module):
             num_layers=num_layers,
             batch_first=True
         )
-        self.linear = nn.Linear(hidden_size, 1)
+        self.linear = nn.Linear(hidden_size, 2)
     
     def forward(self, x):
         lstm_out, _ = self.lstm(x)
@@ -59,7 +59,7 @@ def train_model(num_hid, optimizer_type, learning_rate, epochs, data_dir):
         train_dataset = SequenceDataset(file)
         break
     
-    train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
+    train_loader = DataLoader(train_dataset, batch_size=320, shuffle=True)
     # val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
     
     # Model initialization
@@ -83,7 +83,7 @@ def train_model(num_hid, optimizer_type, learning_rate, epochs, data_dir):
         total_loss = 0
         
         for batch_idx, (inputs, targets) in enumerate(train_loader):
-            print(f'debug print, bat_idx: {batch_idx}, {inputs.shape}, {targets.shape}')
+            # print(f'debug print, bat_idx: {batch_idx}, {inputs.shape}, {targets.shape}')
 
             inputs = inputs.to(device).float()
             targets = targets.to(device).float()
@@ -114,7 +114,8 @@ def train_model(num_hid, optimizer_type, learning_rate, epochs, data_dir):
             # writer.add_scalar('Validation Loss', val_loss, epoch)
     
     # Save the model
-    torch.save(model.state_dict(), 'lstm_model.pth')
+    curr_time = datetime.now().strftime("%m-%d_%H:%M")
+    torch.save(model.state_dict(), f'lstm_{curr_time}.pth')
     writer.close()
 
 def main():

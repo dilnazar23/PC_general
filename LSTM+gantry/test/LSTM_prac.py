@@ -53,9 +53,11 @@ def train_model(num_hid, optimizer_type, learning_rate, epochs, data_dir):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     
     # Data loading
-    data_dir = Path(data_dir)
-    train_dataset = SequenceDataset(data_dir / "sim_train_set.pt")
-    # val_dataset = SequenceDataset(data_dir / "sim_val_set.pt")
+ 
+    for file in Path(data_dir).glob('*.pt'):
+        ## add val_dataset here
+        train_dataset = SequenceDataset(file)
+        break
     
     train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
     # val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)

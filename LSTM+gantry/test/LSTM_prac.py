@@ -34,6 +34,38 @@ class LSTMModel(nn.Module):
         predictions = self.linear(lstm_out[:, -1, :])
         return predictions
 
+def export_model(model, device='cuda', input_shape=(10,1,32)):
+    
+    curr_time = datetime.now().strftime("%m-%d_%H:%M")
+    save_path = f"lstm_{curr_time}"
+    # Save PyTorch model
+    torch.save({
+        'model_state_dict': model.state_dict(),
+        'model_architecture': model.__class__.__name__
+    }, f"{save_path}.pth")
+    
+    # Prepare model for ONNX export
+    model.eval()    
+    # Create dummy input tensor
+    dummy_input = torch.randn(input_shape, device=device)
+    
+    # Export to ONNX
+    torch.onnx.export(
+        model,
+        dummy_input,
+        f"{save_path}.onnx",
+        export_params=True,
+        opset_version=11,
+        do_constant_folding=True,
+        input_names=['input'],
+        output_names=['output'],
+        dynamic_axes={
+            'input': {0: 'batch_size'},
+            'output': {0: 'batch_size'}
+        }
+    )
+    print(f"Model saved as {save_path}.pth and {save_path}.onnx")
+
 def validate_model(model, val_loader, criterion, device):
     model.eval()
     total_loss = 0
@@ -52,12 +84,13 @@ def train_model(num_hid, optimizer_type, learning_rate, epochs, data_dir):
     # Device configuration
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     
-    # Data loading
- 
-    for file in Path(data_dir).glob('*.pt'):
+    # Data loading 
+    for file in Path('test').glob(f'{data_dir}*.pt'):
+        print(file)
         ## add val_dataset here
         train_dataset = SequenceDataset(file)
         break
+    pass
     
     train_loader = DataLoader(train_dataset, batch_size=320, shuffle=True)
     # val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)

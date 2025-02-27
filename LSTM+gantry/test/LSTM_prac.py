@@ -21,6 +21,7 @@ class SequenceDataset(Dataset):
 class LSTMModel(nn.Module):
     def __init__(self, num_features, hidden_size, num_layers=1):
         super(LSTMModel, self).__init__()
+        self.norm = nn.LayerNorm(num_features)
         self.lstm = nn.LSTM(
             input_size=num_features,
             hidden_size=hidden_size,
@@ -30,6 +31,7 @@ class LSTMModel(nn.Module):
         self.linear = nn.Linear(hidden_size, 2)
     
     def forward(self, x):
+        x = self.norm(x)
         lstm_out, _ = self.lstm(x)
         predictions = self.linear(lstm_out[:, -1, :])
         return predictions
@@ -86,11 +88,9 @@ def train_model(num_hid, optimizer_type, learning_rate, epochs, data_dir):
     
     # Data loading 
     for file in Path('test').glob(f'{data_dir}*.pt'):
-        print(file)
         ## add val_dataset here
         train_dataset = SequenceDataset(file)
         break
-    pass
     
     train_loader = DataLoader(train_dataset, batch_size=320, shuffle=True)
     # val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
@@ -124,6 +124,10 @@ def train_model(num_hid, optimizer_type, learning_rate, epochs, data_dir):
             # Forward pass
             outputs = model(inputs)
             loss = criterion(outputs, targets)
+
+            # loss_x= abs(outputs[0]-targets[0])
+            # loss_y= abs(outputs[1]-targets[1])
+            # print(loss_x,loss_y)
             
             # Backward and optimize
             optimizer.zero_grad()

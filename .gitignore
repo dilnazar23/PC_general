@@ -1,0 +1,9 @@
+# Virtual Environment
+dnn_env/
+ai-edge-env/
+venv/
+env/
+.venv/
+.env/
+ENV/
+virtualenv/

@@ -36,7 +36,7 @@ class LSTMModel(nn.Module):
         predictions = self.linear(lstm_out[:, -1, :])
         return predictions
 
-def export_model(model, device='cuda', input_shape=(40,1,32)):
+def export_model(model, device='cuda', input_shape=(1,40,32)):
     
     curr_time = datetime.now().strftime("%m-%d_%H:%M")
     save_path = f"lstm_{curr_time}"
@@ -116,7 +116,7 @@ def train_model(num_hid, optimizer_type, learning_rate, epochs, data_dir):
         total_loss = 0
         
         for batch_idx, (inputs, targets) in enumerate(train_loader):
-            # print(f'debug print, bat_idx: {batch_idx}, {inputs.shape}, {targets.shape}')
+            print(f'debug print, bat_idx: {batch_idx}, {inputs.shape}, {targets.shape}')
 
             inputs = inputs.to(device).float()
             targets = targets.to(device).float()
@@ -124,10 +124,6 @@ def train_model(num_hid, optimizer_type, learning_rate, epochs, data_dir):
             # Forward pass
             outputs = model(inputs)
             loss = criterion(outputs, targets)
-
-            # loss_x= abs(outputs[0]-targets[0])
-            # loss_y= abs(outputs[1]-targets[1])
-            # print(loss_x,loss_y)
             
             # Backward and optimize
             optimizer.zero_grad()

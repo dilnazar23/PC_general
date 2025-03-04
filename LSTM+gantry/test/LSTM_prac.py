@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
-from torch.utils.tensorboard import SummaryWriter
+# from torch.utils.tensorboard import SummaryWriter
 import argparse
 from pathlib import Path
 from datetime import datetime
@@ -36,7 +36,7 @@ class LSTMModel(nn.Module):
         predictions = self.linear(lstm_out[:, -1, :])
         return predictions
 
-def export_model(model, device='cuda', input_shape=(10,1,32)):
+def export_model(model, device='cuda', input_shape=(40,1,32)):
     
     curr_time = datetime.now().strftime("%m-%d_%H:%M")
     save_path = f"lstm_{curr_time}"
@@ -108,7 +108,7 @@ def train_model(num_hid, optimizer_type, learning_rate, epochs, data_dir):
         raise ValueError(f"Unsupported optimizer type: {optimizer_type}")
     
     # TensorBoard setup
-    writer = SummaryWriter('runs/lstm_training')
+    # writer = SummaryWriter('runs/lstm_training')
     
     # Training loop
     for epoch in range(epochs):
@@ -147,13 +147,14 @@ def train_model(num_hid, optimizer_type, learning_rate, epochs, data_dir):
         #           f'Validation Loss: {val_loss:.4f}')
             
         # Log to TensorBoard
-        writer.add_scalar('Training Loss', avg_train_loss, epoch)
+        # writer.add_scalar('Training Loss', avg_train_loss, epoch)
             # writer.add_scalar('Validation Loss', val_loss, epoch)
     
     # Save the model
-    curr_time = datetime.now().strftime("%m-%d_%H:%M")
-    torch.save(model.state_dict(), f'lstm_{curr_time}.pth')
-    writer.close()
+    # curr_time = datetime.now().strftime("%m-%d_%H:%M")
+    # torch.save(model.state_dict(), f'lstm_{curr_time}.pth')
+    # writer.close()
+    export_model(model)
 
 def main():
     parser = argparse.ArgumentParser(description='Train LSTM model')

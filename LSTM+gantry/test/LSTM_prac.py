@@ -36,7 +36,7 @@ class LSTMModel(nn.Module):
         predictions = self.linear(lstm_out[:, -1, :])
         return predictions
 
-def export_model(model, device='cuda', input_shape=(1,40,32)):
+def export_model(model, device='cuda', input_shape=(40,1,32)):
     
     curr_time = datetime.now().strftime("%m-%d_%H:%M")
     save_path = f"lstm_{curr_time}"
@@ -88,6 +88,7 @@ def train_model(num_hid, optimizer_type, learning_rate, epochs, data_dir):
     
     # Data loading 
     for file in Path('test').glob(f'{data_dir}*.pt'):
+        print(file)
         ## add val_dataset here
         train_dataset = SequenceDataset(file)
         break
@@ -116,7 +117,7 @@ def train_model(num_hid, optimizer_type, learning_rate, epochs, data_dir):
         total_loss = 0
         
         for batch_idx, (inputs, targets) in enumerate(train_loader):
-            print(f'debug print, bat_idx: {batch_idx}, {inputs.shape}, {targets.shape}')
+            #print(f'debug print, bat_idx: {batch_idx}, {inputs.shape}, {targets.shape}')
 
             inputs = inputs.to(device).float()
             targets = targets.to(device).float()

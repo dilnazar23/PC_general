@@ -10,6 +10,7 @@ import numpy as np
 def load_input(input_set_path):
     data = np.load(input_set_path)    
     # print(hardware_val_data.files)
+    print(data['m_inputs_1'])
     return data['m_inputs_1']
 
 def load_and_run_lstm_model(model_path,data_path):
@@ -58,7 +59,7 @@ def load_and_run_lstm_model(model_path,data_path):
 
 if __name__ == "__main__":
     # Replace with your actual ONNX model path
-    model_path = "lstm_03-04_11:18.onnx"
+    model_path = "lstm_03-07_16:30.onnx"
     val_data_path = 'desktop_val_input.npz'
     
     try:

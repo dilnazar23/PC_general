@@ -61,10 +61,8 @@ def export_model(model, device='cuda', input_shape=(40,1,32)):
         do_constant_folding=True,
         input_names=['input'],
         output_names=['output'],
-        dynamic_axes={
-            'input': {0: 'batch_size'},
-            'output': {0: 'batch_size'}
-        }
+        dynamic_axes={'input' : {0 : 'sequence_length'},    # variable length axes
+                    'output' : {0 : 'sequence_length'}}
     )
     print(f"Model saved as {save_path}.pth and {save_path}.onnx")
 
@@ -87,10 +85,12 @@ def train_model(num_hid, optimizer_type, learning_rate, epochs, data_dir):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     
     # Data loading 
-    for file in Path('test').glob(f'{data_dir}*.pt'):
+    for file in Path('./data/processed_data').glob(f'{data_dir}*.pt'):
         print(file)
         ## add val_dataset here
         train_dataset = SequenceDataset(file)
+        for item in enumerate(train_dataset):
+            print(item)
         break
     
     train_loader = DataLoader(train_dataset, batch_size=320, shuffle=True)

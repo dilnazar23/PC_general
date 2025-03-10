@@ -11,7 +11,7 @@ def load_input(input_set_path):
     data = np.load(input_set_path)    
     # print(hardware_val_data.files)
     print(data['m_inputs_1'])
-    return data
+    return data['m_inputs_1']
 
 def load_and_run_lstm_model(model_path,data_path):
     # Load the input data
@@ -34,13 +34,14 @@ def load_and_run_lstm_model(model_path,data_path):
 
     #dummy_input = np.random.rand(1, 10, 32).astype(np.float32)
     
-    print(f"Generated dummy input with shape: {hardware_val_data.shape}")
+    print(f"Using input with shape: {hardware_val_data.shape}")
     
     # Run inference
     outputs = session.run(None, {input_name: hardware_val_data})
     
     # Print model output
     print("\nModel output:")
+    print(outputs)
     for i, output in enumerate(outputs):
         print(f"Output {i} shape: {output.shape}")
         
@@ -59,8 +60,8 @@ def load_and_run_lstm_model(model_path,data_path):
 
 if __name__ == "__main__":
     # Replace with your actual ONNX model path
-    model_path = "lstm_03-07_16:30.onnx"
-    val_data_path = 'desktop_val_input.npz'
+    model_path = "py model/lstm_03-10_16:14.onnx"
+    val_data_path = 'data/desktop_val_input.npz'
     
     try:
         print("=== Running full sequence inference ===")

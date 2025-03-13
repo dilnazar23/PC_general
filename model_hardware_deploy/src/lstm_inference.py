@@ -10,8 +10,8 @@ import numpy as np
 def load_input(input_set_path):
     data = np.load(input_set_path)    
     # print(hardware_val_data.files)
-    print(data['m_inputs_1'])
-    return data['m_inputs_1']
+    # print(data['m_inputs_1'])
+    return data
 
 def load_and_run_lstm_model(model_path,data_path):
     # Load the input data
@@ -61,7 +61,7 @@ def load_and_run_lstm_model(model_path,data_path):
 if __name__ == "__main__":
     # Replace with your actual ONNX model path
     model_path = "py model/lstm_03-10_16:14.onnx"
-    val_data_path = 'data/desktop_val_input.npz'
+    val_data_path = 'data/val_1_input.npy'
     
     try:
         print("=== Running full sequence inference ===")
